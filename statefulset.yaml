@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-example
+spec:
+  serviceName: "statefulset-service"
+  replicas: 5
+  selector:
+    matchLabels:
+      app: statefulset-example
+  template:
+    metadata:
+      labels:
+        app: statefulset-example
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.4
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: pvc-storage
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: pvc-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "manual"
+      resources:
+        requests:
+          storage: 1Gi
